@@ -1,0 +1,105 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+    static char[] vertices = {'A', 'B', 'C', 'D', 'E', 'F'};
+
+    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+
+    static int[] visited = new int[6];
+
+    static ArrayList<Integer> path = new ArrayList<>();
+
+    static ArrayList<Integer> cycle = new ArrayList<>();
+
+    public static void main(String[] args) {
+
+        for (int i = 0; i < 6; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        graph.get(0).add(1);
+        graph.get(0).add(2);
+
+        graph.get(1).add(3);
+        graph.get(1).add(4); 
+
+        graph.get(2).add(1); 
+        graph.get(2).add(4); 
+
+        graph.get(3).add(4); 
+        graph.get(3).add(5); 
+
+        graph.get(4).add(5); 
+
+        boolean result = findCycle();
+
+        if (result) {
+            System.out.print("Найден цикл: ");
+
+            for (int i = 0; i < cycle.size(); i++) {
+                System.out.print(vertices[cycle.get(i)]);
+
+                if (i < cycle.size() - 1) {
+                    System.out.print(" -> ");
+                }
+            }
+
+            System.out.println();
+        } else {
+            System.out.println("Циклов нет");
+        }
+    }
+
+    static boolean findCycle() {
+
+        for (int i = 0; i < 6; i++) {
+
+            if (visited[i] == 0) {
+
+                if (dfs(i)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+sw
+    static boolean dfs(int vertex) {
+
+        visited[vertex] = 1;
+
+        path.add(vertex);
+
+        for (int next : graph.get(vertex)) {
+
+            if (visited[next] == 0) {
+
+                if (dfs(next)) {
+                    return true;
+                }
+
+            } else if (visited[next] == 1) {
+
+                int index = path.indexOf(next);
+
+                for (int i = index; i < path.size(); i++) {
+                    cycle.add(path.get(i));
+                }
+
+                cycle.add(next);
+
+                return true;
+            }
+        }
+
+        path.remove(path.size() - 1);
+
+        visited[vertex] = 2;
+
+        return false;
+    }
+}
